@@ -32,7 +32,7 @@ const HomeScreen = () => {
         and share knowledge.
       </Text>
       <View
-        style={tw`flex-row items-center justify-between mt-6 w-4/5 border-2 border-sky-800  h-14 rounded-full`}
+        style={tw`flex-row items-center justify-between mt-6 w-4/5 border-2 border-sky-800  h-15 rounded-full`}
       >
         <TouchableOpacity
           style={tw`flex-1 items-center justify-center bg-sky-800 rounded-full h-full`}

@@ -14,6 +14,13 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         headerShown: false,
+        tabBarShowLabel: false,
+        tabBarStyle: {
+          height: 50,
+          backgroundColor: '#F0F9FF',
+          borderTopWidth: 0.5,
+          shadowColor: 'transparent',
+        },
       }}
     >
       {tabs.map((tab, index) => (
@@ -23,7 +30,10 @@ export default function TabLayout() {
           options={{
             title: tab.title,
             tabBarIcon: ({ focused }) => (
-              <TabBarIcon name={focused ? tab.icon : `${tab.icon}-outline`} />
+              <TabBarIcon
+                name={focused ? tab.icon : `${tab.icon}-outline`}
+                color="#0C4A6E"
+              />
             ),
           }}
         />

@@ -1,5 +1,3 @@
-// You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
-
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 export function TabBarIcon({ name, ...rest }) {
@@ -7,7 +5,7 @@ export function TabBarIcon({ name, ...rest }) {
   return (
     <Ionicons
       name={name}
-      size={24}
+      size={27}
       style={[{ marginBottom: -3 }, style]}
       {...rest}
     />

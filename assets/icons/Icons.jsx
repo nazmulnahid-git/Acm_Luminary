@@ -1,14 +1,20 @@
-import * as React from 'react';
+import * as React from "react";
 import Svg, { Circle, Path } from "react-native-svg";
 
 const defaultProps = {
   width: 26,
   height: 26,
   color: "#000000",
-  strokeWidth: 2
+  strokeWidth: 2,
 };
 
-export const IconHome = ({ width, height, color, strokeWidth, ...props }) => (
+export const IconHome = ({
+  width,
+  height,
+  color,
+  strokeWidth,
+  ...props
+}) => (
   <Svg
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 24 24"
@@ -32,7 +38,13 @@ export const IconHome = ({ width, height, color, strokeWidth, ...props }) => (
   </Svg>
 );
 
-export const IconCommunity = ({ width, height, color, strokeWidth, ...props }) => (
+export const IconCommunity = ({
+  width,
+  height,
+  color,
+  strokeWidth,
+  ...props
+}) => (
   <Svg
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 24 24"
@@ -69,7 +81,13 @@ export const IconCommunity = ({ width, height, color, strokeWidth, ...props }) =
   </Svg>
 );
 
-export const IconNotification = ({ width, height, color, strokeWidth, ...props }) => (
+export const IconNotification = ({
+  width,
+  height,
+  color,
+  strokeWidth,
+  ...props
+}) => (
   <Svg
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 24 24"
@@ -107,7 +125,13 @@ export const IconNotification = ({ width, height, color, strokeWidth, ...props }
   </Svg>
 );
 
-export const IconProfile = ({ width, height, color, strokeWidth, ...props }) => (
+export const IconProfile = ({
+  width,
+  height,
+  color,
+  strokeWidth,
+  ...props
+}) => (
   <Svg
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 24 24"
@@ -132,7 +156,13 @@ export const IconProfile = ({ width, height, color, strokeWidth, ...props }) => 
   </Svg>
 );
 
-export const IconBack = ({ width, height, color, strokeWidth, ...props }) => (
+export const IconBack = ({
+  width,
+  height,
+  color,
+  strokeWidth,
+  ...props
+}) => (
   <Svg
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 24 24"
@@ -159,4 +189,137 @@ export const IconBack = ({ width, height, color, strokeWidth, ...props }) => (
   </Svg>
 );
 
-export default IconBack;
+export const IconEmail = ({ width, height, color, strokeWidth, ...props }) => (
+  <Svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    width={width || defaultProps.width}
+    height={height || defaultProps.height}
+    color={color || defaultProps.color}
+    fill="none"
+    {...props}
+  >
+    <Path
+      d="M2 6L8.91302 9.91697C11.4616 11.361 12.5384 11.361 15.087 9.91697L22 6"
+      stroke={color || defaultProps.color}
+      strokeWidth={strokeWidth || defaultProps.strokeWidth}
+      strokeLinejoin="round"
+    />
+    <Path
+      d="M2.01577 13.4756C2.08114 16.5412 2.11383 18.0739 3.24496 19.2094C4.37608 20.3448 5.95033 20.3843 9.09883 20.4634C11.0393 20.5122 12.9607 20.5122 14.9012 20.4634C18.0497 20.3843 19.6239 20.3448 20.7551 19.2094C21.8862 18.0739 21.9189 16.5412 21.9842 13.4756C22.0053 12.4899 22.0053 11.5101 21.9842 10.5244C21.9189 7.45886 21.8862 5.92609 20.7551 4.79066C19.6239 3.65523 18.0497 3.61568 14.9012 3.53657C12.9607 3.48781 11.0393 3.48781 9.09882 3.53656C5.95033 3.61566 4.37608 3.65521 3.24495 4.79065C2.11382 5.92608 2.08114 7.45885 2.01576 10.5244C1.99474 11.5101 1.99475 12.4899 2.01577 13.4756Z"
+      stroke={color || defaultProps.color}
+      strokeWidth={strokeWidth || defaultProps.strokeWidth}
+      strokeLinejoin="round"
+    />
+  </Svg>
+);
+
+export const IconPassword = ({
+  width,
+  height,
+  color,
+  strokeWidth,
+  ...props
+}) => (
+  <Svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    width={width || defaultProps.width}
+    height={height || defaultProps.height}
+    color={color || defaultProps.color}
+    fill="none"
+    {...props}
+  >
+    <Path
+      d="M4.26781 18.8447C4.49269 20.515 5.87613 21.8235 7.55966 21.9009C8.97627 21.966 10.4153 22 12 22C13.5847 22 15.0237 21.966 16.4403 21.9009C18.1239 21.8235 19.5073 20.515 19.7322 18.8447C19.879 17.7547 20 16.6376 20 15.5C20 14.3624 19.879 13.2453 19.7322 12.1553C19.5073 10.485 18.1239 9.17649 16.4403 9.09909C15.0237 9.03397 13.5847 9 12 9C10.4153 9 8.97627 9.03397 7.55966 9.09909C5.87613 9.17649 4.49269 10.485 4.26781 12.1553C4.12105 13.2453 4 14.3624 4 15.5C4 16.6376 4.12105 17.7547 4.26781 18.8447Z"
+      stroke={color || defaultProps.color}
+      strokeWidth={strokeWidth || defaultProps.strokeWidth}
+    />
+    <Path
+      d="M7.5 9V6.5C7.5 4.01472 9.51472 2 12 2C14.4853 2 16.5 4.01472 16.5 6.5V9"
+      stroke={color || defaultProps.color}
+      strokeWidth={strokeWidth || defaultProps.strokeWidth}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <Path
+      d="M16 15.49V15.5"
+      stroke={color || defaultProps.color}
+      strokeWidth={strokeWidth || defaultProps.strokeWidth}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <Path
+      d="M12 15.49V15.5"
+      stroke={color || defaultProps.color}
+      strokeWidth={strokeWidth || defaultProps.strokeWidth}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <Path
+      d="M8 15.49V15.5"
+      stroke={color || defaultProps.color}
+      strokeWidth={strokeWidth || defaultProps.strokeWidth}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </Svg>
+);
+
+export const IconSettings = ({
+  width,
+  height,
+  color,
+  strokeWidth,
+  ...props
+}) => (
+  <Svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    width={width || defaultProps.width}
+    height={height || defaultProps.height}
+    color={color || defaultProps.color}
+    fill="none"
+    {...props}
+  >
+    <Path
+      d="M15.5 12C15.5 13.933 13.933 15.5 12 15.5C10.067 15.5 8.5 13.933 8.5 12C8.5 10.067 10.067 8.5 12 8.5C13.933 8.5 15.5 10.067 15.5 12Z"
+      stroke={color || defaultProps.color}
+      strokeWidth={strokeWidth || defaultProps.strokeWidth}
+    />
+    <Path
+      d="M20.7906 9.15201C21.5969 10.5418 22 11.2366 22 12C22 12.7634 21.5969 13.4582 20.7906 14.848L18.8669 18.1638C18.0638 19.548 17.6623 20.2402 17.0019 20.6201C16.3416 21 15.5402 21 13.9373 21L10.0627 21C8.45982 21 7.6584 21 6.99807 20.6201C6.33774 20.2402 5.93619 19.548 5.13311 18.1638L3.20942 14.848C2.40314 13.4582 2 12.7634 2 12C2 11.2366 2.40314 10.5418 3.20942 9.152L5.13311 5.83621C5.93619 4.45196 6.33774 3.75984 6.99807 3.37992C7.6584 3 8.45982 3 10.0627 3L13.9373 3C15.5402 3 16.3416 3 17.0019 3.37992C17.6623 3.75984 18.0638 4.45197 18.8669 5.83622L20.7906 9.15201Z"
+      stroke={color || defaultProps.color}
+      strokeWidth={strokeWidth || defaultProps.strokeWidth}
+    />
+  </Svg>
+);
+
+export const IconLogout = ({
+  width,
+  height,
+  color,
+  strokeWidth,
+  ...props
+}) => (
+  <Svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    width={width || defaultProps.width}
+    height={height || defaultProps.height}
+    color={color || defaultProps.color}
+    fill="none"
+    {...props}
+  >
+    <Path
+      d="M15 17.625C14.9264 19.4769 13.3831 21.0494 11.3156 20.9988C10.8346 20.987 10.2401 20.8194 9.05112 20.484C6.18961 19.6768 3.70555 18.3203 3.10956 15.2815C3 14.723 3 14.0944 3 12.8373L3 11.1627C3 9.90561 3 9.27705 3.10956 8.71846C3.70555 5.67965 6.18961 4.32316 9.05112 3.51603C10.2401 3.18064 10.8346 3.01295 11.3156 3.00119C13.3831 2.95061 14.9264 4.52307 15 6.37501"
+      stroke={color || defaultProps.color}
+      strokeWidth={strokeWidth || defaultProps.strokeWidth}
+      strokeLinecap="round" />
+    <Path d="M21 12H10M21 12C21 11.2998 19.0057 9.99153 18.5 9.5M21 12C21 12.7002 19.0057 14.0085 18.5 14.5"
+      stroke={color || defaultProps.color}
+      strokeWidth={strokeWidth || defaultProps.strokeWidth}
+      strokeLinecap="round"
+      strokeLinejoin="round" />
+
+  </Svg>);

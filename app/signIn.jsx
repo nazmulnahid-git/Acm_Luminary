@@ -2,8 +2,9 @@ import { Image, Text, Pressable, View, StyleSheet, TextInput, StatusBar } from '
 import React, { useState } from 'react';
 import { useRouter } from 'expo-router';
 import ScreenWrapper from '@/components/ScreenWrapper';
-import { Ionicons, SimpleLineIcons, FontAwesome6 } from '@expo/vector-icons';
-import {theme} from '@/constants/theme';
+import { FontAwesome6 } from '@expo/vector-icons';
+import { IconEmail, IconPassword } from '../assets/icons/Icons'
+import { theme } from '@/constants/theme';
 import BackButton from '../components/BackButton';
 const { colors } = theme;
 
@@ -17,76 +18,67 @@ const LoginScreen = () => {
 
   return (
     <ScreenWrapper>
-    <StatusBar style="dark" />
-    <View style={styles.container}>
-    <BackButton height={40} width={40} />
-      <View style={styles.contentWrapper}>
-        <View style={styles.headerContainer}>
-          <Text style={styles.headerText}>Hey,</Text>
-          <Text style={styles.headerText}>Welcome</Text>
-          <Text style={styles.headerText}>Back</Text>
-        </View>
-        {/* Form */}
-        <View style={styles.formContainer}>
-          <View style={styles.inputContainer}>
-            <Ionicons
-              style={styles.inputIcon}
-              name={'mail-outline'}
-              size={25}
-              color={colors.gray}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Enter Your Email"
-              placeholderTextColor={colors.gray}
-              keyboardType="email-address"
-            />
+      <StatusBar style="dark" />
+      <View style={styles.container}>
+        <BackButton height={40} width={40} />
+        <View style={styles.contentWrapper}>
+          <View style={styles.headerContainer}>
+            <Text style={styles.headerText}>Hey,</Text>
+            <Text style={styles.headerText}>Welcome</Text>
+            <Text style={styles.headerText}>Back</Text>
           </View>
-          <View style={styles.inputContainer}>
-            <SimpleLineIcons
-              style={styles.inputIcon}
-              name={'lock'}
-              size={25}
-              color={colors.gray}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Enter Your Password"
-              placeholderTextColor={colors.gray}
-              secureTextEntry={secureEntry}
-            />
-            <Pressable onPress={() => setSecureEntry((prev) => !prev)}>
-              <FontAwesome6
-                style={styles.inputIcon}
-                name={secureEntry ? 'eye' : 'eye-slash'}
-                size={15}
-                color={colors.gray}
+          {/* Form */}
+          <View style={styles.formContainer}>
+            <View style={styles.inputContainer}>
+              <IconEmail style={styles.inputIcon} height={25} width={25} color={colors.gray} />
+
+              <TextInput
+                style={styles.input}
+                placeholder="Enter Your Email"
+                placeholderTextColor={colors.gray}
+                keyboardType="email-address"
               />
+            </View>
+            <View style={styles.inputContainer}>
+              <IconPassword style={styles.inputIcon} height={25} width={25} color={colors.gray} />
+              <TextInput
+                style={styles.input}
+                placeholder="Enter Your Password"
+                placeholderTextColor={colors.gray}
+                secureTextEntry={secureEntry}
+              />
+              <Pressable onPress={() => setSecureEntry((prev) => !prev)}>
+                <FontAwesome6
+                  style={styles.inputIcon}
+                  name={secureEntry ? 'eye' : 'eye-slash'}
+                  size={15}
+                  color={colors.gray}
+                />
+              </Pressable>
+            </View>
+            <Pressable>
+              <Text style={styles.forgotPassword}>Forgot Password?</Text>
             </Pressable>
-          </View>
-          <Pressable>
-            <Text style={styles.forgotPassword}>Forgot Password?</Text>
-          </Pressable>
-          <Pressable style={styles.loginButton}>
-            <Text style={styles.loginButtonText}>Login</Text>
-          </Pressable>
-          <Text style={styles.dividerText}>or continue with</Text>
-          <Pressable style={styles.googleButton}>
-            <Image
-              source={require('../assets/images/google.png')}
-              style={styles.googleIcon}
-            />
-            <Text style={styles.googleButtonText}>Google</Text>
-          </Pressable>
-          <View style={styles.signupContainer}>
-            <Text style={styles.signupText}>Don't have an account?</Text>
-            <Pressable onPress={handleSignup}>
-              <Text style={styles.signupLink}>Sign up</Text>
+            <Pressable style={styles.loginButton}>
+              <Text style={styles.loginButtonText}>Login</Text>
             </Pressable>
+            <Text style={styles.dividerText}>or continue with</Text>
+            <Pressable style={styles.googleButton}>
+              <Image
+                source={require('../assets/images/google.png')}
+                style={styles.googleIcon}
+              />
+              <Text style={styles.googleButtonText}>Google</Text>
+            </Pressable>
+            <View style={styles.signupContainer}>
+              <Text style={styles.signupText}>Don't have an account?</Text>
+              <Pressable onPress={handleSignup}>
+                <Text style={styles.signupLink}>Sign up</Text>
+              </Pressable>
+            </View>
           </View>
         </View>
       </View>
-    </View>
     </ScreenWrapper>
   );
 };

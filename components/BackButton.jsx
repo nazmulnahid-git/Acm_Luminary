@@ -9,7 +9,7 @@ const BackButton = ({ size = 24, ...props }) => {
   const router = useRouter();
   return (
     <Pressable onPress={() => router.back()}>
-      <IconBack size={size} strokeWidth={2.5} color={colors.primary} {...props} />
+      <IconBack size={size} strokeWidth={1.5} color={colors.primary} {...props} />
     </Pressable>
   )
 }

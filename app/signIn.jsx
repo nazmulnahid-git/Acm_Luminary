@@ -1,81 +1,71 @@
-import { Image, Text, Pressable, View, StyleSheet, TextInput, StatusBar } from 'react-native';
-import React, { useState } from 'react';
+import { Text, Pressable, View, StyleSheet, StatusBar } from 'react-native';
+import React, { useRef, useState } from 'react';
 import { useRouter } from 'expo-router';
-import ScreenWrapper from '@/components/ScreenWrapper';
-import { FontAwesome6 } from '@expo/vector-icons';
-import { IconEmail, IconPassword } from '../assets/icons/Icons'
-import { theme } from '@/constants/theme';
+import ScreenWrapper from '../components/ScreenWrapper';
+import { hp, wp } from '@/helpers/common';
+import { IconEmail, IconPassword } from '../assets/icons/Icons';
+import { theme } from '../constants/theme';
 import BackButton from '../components/BackButton';
+import Button from '../components/Button';
+import Input from '../components/Input';
+import { supabase } from '../lib/supabase';
+
 const { colors } = theme;
 
 const LoginScreen = () => {
   const router = useRouter();
-  const [secureEntry, setSecureEntry] = useState(true);
+  const emailRef = useRef();
+  const passwordRef = useRef();
+  const [loading, setLoading] = useState(false);
 
   const handleSignup = () => {
-    router.replace('/signup');
+    router.replace('/signUp');
+  };
+
+  const onSubmit = async () => {
+    setLoading(true);
+    const { error } = await supabase.auth.signInWithPassword({
+      email: email,
+      password: password,
+    })
+
+    if (error) Alert.alert(error.message)
+    else router.replace('/welcome');
+    setLoading(false);
   };
 
   return (
-    <ScreenWrapper>
+    <ScreenWrapper bg="white">
       <StatusBar style="dark" />
       <View style={styles.container}>
         <BackButton height={40} width={40} />
-        <View style={styles.contentWrapper}>
-          <View style={styles.headerContainer}>
-            <Text style={styles.headerText}>Hey,</Text>
-            <Text style={styles.headerText}>Welcome</Text>
-            <Text style={styles.headerText}>Back</Text>
-          </View>
-          {/* Form */}
-          <View style={styles.formContainer}>
-            <View style={styles.inputContainer}>
-              <IconEmail style={styles.inputIcon} height={25} width={25} color={colors.gray} />
-
-              <TextInput
-                style={styles.input}
-                placeholder="Enter Your Email"
-                placeholderTextColor={colors.gray}
-                keyboardType="email-address"
-              />
-            </View>
-            <View style={styles.inputContainer}>
-              <IconPassword style={styles.inputIcon} height={25} width={25} color={colors.gray} />
-              <TextInput
-                style={styles.input}
-                placeholder="Enter Your Password"
-                placeholderTextColor={colors.gray}
-                secureTextEntry={secureEntry}
-              />
-              <Pressable onPress={() => setSecureEntry((prev) => !prev)}>
-                <FontAwesome6
-                  style={styles.inputIcon}
-                  name={secureEntry ? 'eye' : 'eye-slash'}
-                  size={15}
-                  color={colors.gray}
-                />
-              </Pressable>
-            </View>
-            <Pressable>
-              <Text style={styles.forgotPassword}>Forgot Password?</Text>
+        <View>
+          <Text style={styles.welcomeText}>Hey,</Text>
+          <Text style={styles.welcomeText}>Welcome Back</Text>
+        </View>
+        <View style={styles.form}>
+          <Text style={styles.instructionText}>Please log in to continue ...</Text>
+          <Input
+            icon={<IconEmail strokeWidth={1.6} height={25} width={25} color={colors.gray} />}
+            placeholder="Enter Your Email"
+            placeholderTextColor={colors.gray}
+            onChangeText={(value) => emailRef.current = value}
+            keyboardType="email-address"
+          />
+          <Input
+            icon={<IconPassword strokeWidth={1.6} height={26} width={26} color={colors.gray} />}
+            placeholder="Enter Your Password"
+            placeholderTextColor={colors.gray}
+            onChangeText={(value) => passwordRef.current = value}
+            secureTextEntry
+          />
+          <Text style={styles.forgotPassword}>Forgot Password?</Text>
+          <Button title="Login" buttonStyle={styles.loginButton} onPress={onSubmit} loading={loading} />
+          <View style={styles.footer}>
+            <Text style={styles.footerText}>Don't have an account?</Text>
+            <Pressable onPress={handleSignup}>
+              <Text style={styles.signupLink}>Sign up</Text>
             </Pressable>
-            <Pressable style={styles.loginButton}>
-              <Text style={styles.loginButtonText}>Login</Text>
-            </Pressable>
-            <Text style={styles.dividerText}>or continue with</Text>
-            <Pressable style={styles.googleButton}>
-              <Image
-                source={require('../assets/images/google.png')}
-                style={styles.googleIcon}
-              />
-              <Text style={styles.googleButtonText}>Google</Text>
-            </Pressable>
-            <View style={styles.signupContainer}>
-              <Text style={styles.signupText}>Don't have an account?</Text>
-              <Pressable onPress={handleSignup}>
-                <Text style={styles.signupLink}>Sign up</Text>
-              </Pressable>
-            </View>
           </View>
         </View>
       </View>
@@ -86,100 +76,42 @@ const LoginScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white',
-    padding: 20,
-    justifyContent: 'center',
+    paddingHorizontal: wp(5),
+    gap: 45,
   },
-  contentWrapper: {
-    paddingVertical: 20,
-  },
-  headerContainer: {
-    marginVertical: 20,
-  },
-  headerText: {
-    fontSize: 36,
+  welcomeText: {
+    fontSize: hp(5),
     color: colors.textDark,
-    fontWeight: '600',
+    fontWeight: theme.fonts.bold,
   },
-  formContainer: {
-    marginTop: 20,
+  form: {
+    gap: 25,
   },
-  inputContainer: {
-    borderWidth: 1,
-    borderColor: colors.primary,
-    height: 60,
-    borderRadius: 30,
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 8,
-    marginVertical: 8,
-  },
-  inputIcon: {
-    margin: 8,
-  },
-  input: {
-    flex: 1,
-    padding: 4,
+  instructionText: {
+    fontSize: hp(2),
+    color: colors.text,
   },
   forgotPassword: {
     textAlign: 'right',
-    color: colors.textDark,
-    fontWeight: '600',
-    marginVertical: 8,
+    color: colors.primary,
+    fontWeight: theme.fonts.semibold,
   },
   loginButton: {
-    backgroundColor: colors.primary,
-    height: 60,
-    borderRadius: 30,
-    marginTop: 20,
-    justifyContent: 'center',
+    marginHorizontal: wp(3),
   },
-  loginButtonText: {
-    margin: 8,
-    color: 'white',
-    fontSize: 18,
-    fontWeight: '600',
-    textAlign: 'center',
-  },
-  dividerText: {
-    textAlign: 'center',
-    marginVertical: 20,
-    color: colors.gray,
-  },
-  googleButton: {
-    borderWidth: 1,
-    borderColor: colors.primary,
-    height: 60,
-    borderRadius: 30,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 8,
-  },
-  googleIcon: {
-    height: 20,
-    width: 20,
-  },
-  googleButtonText: {
-    margin: 8,
-    fontSize: 18,
-    fontWeight: '600',
-    color: colors.primary,
-    marginLeft: 8,
-  },
-  signupContainer: {
+  footer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginVertical: 20,
+    gap: 5,
   },
-  signupText: {
-    color: '#6B7280',
+  footerText: {
+    color: colors.text,
+    fontSize: hp(2),
   },
   signupLink: {
     color: colors.primary,
-    fontWeight: 'bold',
-    marginLeft: 4,
+    fontWeight: theme.fonts.semibold,
   },
 });
 

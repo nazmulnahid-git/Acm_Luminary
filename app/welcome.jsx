@@ -2,7 +2,7 @@ import { Image, Text, TouchableOpacity, View, StyleSheet } from 'react-native';
 import React from 'react';
 import { useRouter } from 'expo-router';
 import ScreenWrapper from '../components/ScreenWrapper';
-import {theme} from '../constants/theme';
+import { theme } from '../constants/theme';
 const { colors } = theme;
 
 const HomeScreen = () => {
@@ -13,8 +13,7 @@ const HomeScreen = () => {
   };
 
   const handleSignup = () => {
-    console.log('signup');
-    // router.push('/auth/signup');
+    router.push('/signUp');
   };
 
   return (

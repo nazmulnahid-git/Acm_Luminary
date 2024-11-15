@@ -9,6 +9,7 @@ export const theme = {
     text: '#494949',
     textLight: '#7c7c7c',
     textDark: '#323362',
+    danger: '#c9302c',
     // textDark: '#1d1d1d',
 
 

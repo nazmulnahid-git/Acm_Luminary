@@ -37,12 +37,10 @@ const SignupScreen = () => {
       setLoading(false);
       return;
     }
-    const { data: { session }, error } = await supabase.auth.signUp({
+    const { error } = await supabase.auth.signUp({
       email: email,
       password: password,
     });
-    console.log('session', session);
-    console.log('error', error);
     if (error) Alert.alert(error.message);
     setLoading(false);
   };

@@ -1,18 +1,16 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native'
+import { View } from 'react-native'
 import React from 'react'
 import ScreenWrapper from '@/components/ScreenWrapper'
-import { router } from 'expo-router'
+import Loading from '../components/Loading'
 
 const index = () => {
   return (
     <ScreenWrapper bg='white'>
-      <Pressable onPress={()=> router.push('/welcome')}>
-        <Text> Go to welcome </Text>
-      </Pressable>
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Loading />
+      </View>
     </ScreenWrapper>
   )
 }
 
-export default index
-
-const styles = StyleSheet.create({})
+export default index;

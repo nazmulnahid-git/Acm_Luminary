@@ -23,14 +23,13 @@ const LoginScreen = () => {
   };
 
   const onSubmit = async () => {
+    const email = emailRef.current.trim();
+    const password = passwordRef.current.trim();
     setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data: { session }, error } = await supabase.auth.signInWithPassword({
       email: email,
       password: password,
-    })
-
-    if (error) Alert.alert(error.message)
-    else router.replace('/welcome');
+    });
     setLoading(false);
   };
 

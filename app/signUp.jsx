@@ -1,5 +1,5 @@
 import { Text, Pressable, View, StyleSheet, StatusBar, Alert } from 'react-native';
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'expo-router';
 import ScreenWrapper from '../components/ScreenWrapper';
 import { hp, wp } from '@/helpers/common';
@@ -14,34 +14,46 @@ const { colors } = theme;
 
 const SignupScreen = () => {
   const router = useRouter();
-  const emailRef = useRef();
-  const passwordRef = useRef();
-  const confirmPasswordRef = useRef();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleLogin = () => {
     router.replace('/signIn');
   };
 
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
   const onSubmit = async () => {
     setLoading(true);
-    const email = emailRef.current.trim();
-    const password = passwordRef.current.trim();
-    const confirmPassword = confirmPasswordRef.current.trim();
+
     if (!email || !password || !confirmPassword) {
-      Alert.alert('Please fill all the fields');
-      setLoading(false);
-      return;
-    } else if (password !== confirmPassword) {
-      Alert.alert('Both passwords should be same');
+      Alert.alert('Please', 'Fill all the fields to signup');
       setLoading(false);
       return;
     }
-    const { error } = await supabase.auth.signUp({
-      email: email,
-      password: password,
-    });
-    if (error) Alert.alert(error.message);
+    if (!validateEmail(email)) {
+      Alert.alert('Invalid Email', 'Please enter a valid email address');
+      setLoading(false);
+      return;
+    }
+    if (password !== confirmPassword) {
+      Alert.alert('Password Mismatch', 'Both passwords should be same');
+      setLoading(false);
+      return;
+    }
+
+    const { error } = await supabase.auth.signUp({ email, password });
+    if (error) {
+      Alert.alert('Failed', error.message);
+    }
+    // else {
+    //   Alert.alert('Success', 'Check your email to complete the signup process!');
+    // }
     setLoading(false);
   };
 
@@ -60,22 +72,25 @@ const SignupScreen = () => {
             icon={<IconEmail strokeWidth={1.6} height={25} width={25} color={colors.gray} />}
             placeholder="Enter Your Email"
             placeholderTextColor={colors.gray}
-            onChangeText={(value) => emailRef.current = value}
+            onChangeText={setEmail}
             keyboardType="email-address"
+            value={email}
           />
           <Input
             icon={<IconPassword strokeWidth={1.6} height={26} width={26} color={colors.gray} />}
             placeholder="Enter Your Password"
             placeholderTextColor={colors.gray}
-            onChangeText={(value) => passwordRef.current = value}
+            onChangeText={setPassword}
             secureTextEntry
+            value={password}
           />
           <Input
             icon={<IconPassword strokeWidth={1.6} height={26} width={26} color={colors.gray} />}
             placeholder="Confirm Your Password"
             placeholderTextColor={colors.gray}
-            onChangeText={(value) => confirmPasswordRef.current = value}
+            onChangeText={setConfirmPassword}
             secureTextEntry
+            value={confirmPassword}
           />
           <Button title="Sign Up" buttonStyle={styles.signupButton} onPress={onSubmit} loading={loading} />
           <View style={styles.footer}>

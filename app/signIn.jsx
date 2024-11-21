@@ -1,5 +1,5 @@
-import { Text, Pressable, View, StyleSheet, StatusBar } from 'react-native';
-import React, { useRef, useState } from 'react';
+import { Text, Pressable, View, StyleSheet, StatusBar, Alert } from 'react-native';
+import React, { useState } from 'react';
 import { useRouter } from 'expo-router';
 import ScreenWrapper from '../components/ScreenWrapper';
 import { hp, wp } from '@/helpers/common';
@@ -14,22 +14,40 @@ const { colors } = theme;
 
 const LoginScreen = () => {
   const router = useRouter();
-  const emailRef = useRef();
-  const passwordRef = useRef();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleSignup = () => {
     router.replace('/signUp');
   };
 
+  const isValidEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
   const onSubmit = async () => {
-    const email = emailRef.current.trim();
-    const password = passwordRef.current.trim();
+    if (!email || !password) {
+      Alert.alert('Please', 'Enter both email and password to login');
+      return;
+    }
+
+    if (!isValidEmail(email)) {
+      Alert.alert('Invalid Email', 'Please enter a valid email address');
+      return;
+    }
+
     setLoading(true);
     const { data: { session }, error } = await supabase.auth.signInWithPassword({
       email: email,
       password: password,
     });
+
+    if (error) {
+      Alert.alert('Failed', error.message);
+    }
+
     setLoading(false);
   };
 
@@ -48,15 +66,17 @@ const LoginScreen = () => {
             icon={<IconEmail strokeWidth={1.6} height={25} width={25} color={colors.gray} />}
             placeholder="Enter Your Email"
             placeholderTextColor={colors.gray}
-            onChangeText={(value) => emailRef.current = value}
+            onChangeText={setEmail}
             keyboardType="email-address"
+            value={email}
           />
           <Input
             icon={<IconPassword strokeWidth={1.6} height={26} width={26} color={colors.gray} />}
             placeholder="Enter Your Password"
             placeholderTextColor={colors.gray}
-            onChangeText={(value) => passwordRef.current = value}
+            onChangeText={setPassword}
             secureTextEntry
+            value={password}
           />
           <Text style={styles.forgotPassword}>Forgot Password?</Text>
           <Button title="Login" buttonStyle={styles.loginButton} onPress={onSubmit} loading={loading} />

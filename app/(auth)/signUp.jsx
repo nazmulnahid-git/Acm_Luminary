@@ -1,53 +1,59 @@
 import { Text, Pressable, View, StyleSheet, StatusBar, Alert } from 'react-native';
 import React, { useState } from 'react';
 import { useRouter } from 'expo-router';
-import ScreenWrapper from '../components/ScreenWrapper';
+import ScreenWrapper from '../../components/ScreenWrapper';
 import { hp, wp } from '@/helpers/common';
-import { IconEmail, IconPassword } from '../assets/icons/Icons';
-import { theme } from '../constants/theme';
-import BackButton from '../components/BackButton';
-import Button from '../components/Button';
-import Input from '../components/Input';
-import { supabase } from '../lib/supabase';
+import { IconEmail, IconPassword } from '../../assets/icons/Icons';
+import { theme } from '../../constants/theme';
+import BackButton from '../../components/BackButton';
+import Button from '../../components/Button';
+import Input from '../../components/Input';
+import { supabase } from '../../lib/supabase';
 
 const { colors } = theme;
 
-const LoginScreen = () => {
+const SignupScreen = () => {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleSignup = () => {
-    router.replace('/signUp');
+  const handleLogin = () => {
+    router.replace('/signIn');
   };
 
-  const isValidEmail = (email) => {
+  const validateEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
 
   const onSubmit = async () => {
-    if (!email || !password) {
-      Alert.alert('Please', 'Enter both email and password to login');
-      return;
-    }
-
-    if (!isValidEmail(email)) {
-      Alert.alert('Invalid Email', 'Please enter a valid email address');
-      return;
-    }
-
     setLoading(true);
-    const { data: { session }, error } = await supabase.auth.signInWithPassword({
-      email: email,
-      password: password,
-    });
 
+    if (!email || !password || !confirmPassword) {
+      Alert.alert('Please', 'Fill all the fields to signup');
+      setLoading(false);
+      return;
+    }
+    if (!validateEmail(email)) {
+      Alert.alert('Invalid Email', 'Please enter a valid email address');
+      setLoading(false);
+      return;
+    }
+    if (password !== confirmPassword) {
+      Alert.alert('Password Mismatch', 'Both passwords should be same');
+      setLoading(false);
+      return;
+    }
+
+    const { error } = await supabase.auth.signUp({ email, password });
     if (error) {
       Alert.alert('Failed', error.message);
     }
-
+    // else {
+    //   Alert.alert('Success', 'Check your email to complete the signup process!');
+    // }
     setLoading(false);
   };
 
@@ -57,11 +63,11 @@ const LoginScreen = () => {
       <View style={styles.container}>
         <BackButton height={40} width={40} />
         <View>
-          <Text style={styles.welcomeText}>Hey,</Text>
-          <Text style={styles.welcomeText}>Welcome Back</Text>
+          <Text style={styles.welcomeText}>Let's</Text>
+          <Text style={styles.welcomeText}>Get Started</Text>
         </View>
         <View style={styles.form}>
-          <Text style={styles.instructionText}>Please log in to continue ...</Text>
+          <Text style={styles.instructionText}>Please sign up to continue ...</Text>
           <Input
             icon={<IconEmail strokeWidth={1.6} height={25} width={25} color={colors.gray} />}
             placeholder="Enter Your Email"
@@ -78,12 +84,19 @@ const LoginScreen = () => {
             secureTextEntry
             value={password}
           />
-          <Text style={styles.forgotPassword}>Forgot Password?</Text>
-          <Button title="Login" buttonStyle={styles.loginButton} onPress={onSubmit} loading={loading} />
+          <Input
+            icon={<IconPassword strokeWidth={1.6} height={26} width={26} color={colors.gray} />}
+            placeholder="Confirm Your Password"
+            placeholderTextColor={colors.gray}
+            onChangeText={setConfirmPassword}
+            secureTextEntry
+            value={confirmPassword}
+          />
+          <Button title="Sign Up" buttonStyle={styles.signupButton} onPress={onSubmit} loading={loading} />
           <View style={styles.footer}>
-            <Text style={styles.footerText}>Don't have an account?</Text>
-            <Pressable onPress={handleSignup}>
-              <Text style={styles.signupLink}>Sign up</Text>
+            <Text style={styles.footerText}>Already have an account?</Text>
+            <Pressable onPress={handleLogin}>
+              <Text style={styles.loginLink}>Log in</Text>
             </Pressable>
           </View>
         </View>
@@ -110,12 +123,7 @@ const styles = StyleSheet.create({
     fontSize: hp(2),
     color: colors.text,
   },
-  forgotPassword: {
-    textAlign: 'right',
-    color: colors.primary,
-    fontWeight: theme.fonts.semibold,
-  },
-  loginButton: {
+  signupButton: {
     marginHorizontal: wp(3),
   },
   footer: {
@@ -128,10 +136,10 @@ const styles = StyleSheet.create({
     color: colors.text,
     fontSize: hp(2),
   },
-  signupLink: {
+  loginLink: {
     color: colors.primary,
     fontWeight: theme.fonts.semibold,
   },
 });
 
-export default LoginScreen;
+export default SignupScreen;

@@ -1,9 +1,9 @@
+import React, { useState, useCallback } from 'react';
 import { Text, Pressable, View, StyleSheet, StatusBar, Alert } from 'react-native';
-import React, { useState } from 'react';
 import { useRouter } from 'expo-router';
 import ScreenWrapper from '../../components/ScreenWrapper';
 import { hp, wp } from '@/helpers/common';
-import { IconEmail, IconPassword } from '../../assets/icons/Icons';
+import { IconEmail, IconPassword, IconProfile } from '../../assets/icons/Icons';
 import { theme } from '../../constants/theme';
 import BackButton from '../../components/BackButton';
 import Button from '../../components/Button';
@@ -14,48 +14,74 @@ const { colors } = theme;
 
 const SignupScreen = () => {
   const router = useRouter();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [formData, setFormData] = useState({ name: '', email: '', password: '' });
   const [loading, setLoading] = useState(false);
 
-  const handleLogin = () => {
-    router.replace('/signIn');
+  const handleChange = (key, value) => {
+    setFormData((prev) => ({ ...prev, [key]: value }));
   };
 
-  const validateEmail = (email) => {
+  const validateForm = useCallback(() => {
+    const { name, email, password } = formData;
+    if (!name || !email || !password) {
+      return 'Please fill all the fields to sign up.';
+    }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  };
+    if (!emailRegex.test(email)) {
+      return 'Please enter a valid email address.';
+    }
+    if (password.length < 6) {
+      return 'Password must be at least 6 characters long.';
+    }
+    return null;
+  }, [formData]);
 
-  const onSubmit = async () => {
+  const handleSignup = async () => {
+    const errorMessage = validateForm();
+    if (errorMessage) {
+      Alert.alert('Error', errorMessage);
+      return;
+    }
+
     setLoading(true);
 
-    if (!email || !password || !confirmPassword) {
-      Alert.alert('Please', 'Fill all the fields to signup');
+    try {
+      const { error } = await supabase.auth.signUp({
+        email: formData.email,
+        password: formData.password,
+        options: {
+          data: {
+            name: formData.name
+          }
+        }
+      });
+      if (error) throw new Error(error.message);
+    } catch (err) {
+      Alert.alert('Failed', err.message);
+    } finally {
       setLoading(false);
-      return;
     }
-    if (!validateEmail(email)) {
-      Alert.alert('Invalid Email', 'Please enter a valid email address');
-      setLoading(false);
-      return;
-    }
-    if (password !== confirmPassword) {
-      Alert.alert('Password Mismatch', 'Both passwords should be same');
-      setLoading(false);
-      return;
-    }
-
-    const { error } = await supabase.auth.signUp({ email, password });
-    if (error) {
-      Alert.alert('Failed', error.message);
-    }
-    // else {
-    //   Alert.alert('Success', 'Check your email to complete the signup process!');
-    // }
-    setLoading(false);
   };
+
+  const inputConfig = [
+    {
+      key: 'name',
+      placeholder: 'Enter Your Full Name',
+      icon: <IconProfile strokeWidth={1.6} height={25} width={25} color={colors.gray} />,
+    },
+    {
+      key: 'email',
+      placeholder: 'Enter Your Email',
+      keyboardType: 'email-address',
+      icon: <IconEmail strokeWidth={1.6} height={25} width={25} color={colors.gray} />,
+    },
+    {
+      key: 'password',
+      placeholder: 'Enter Your Password',
+      secureTextEntry: true,
+      icon: <IconPassword strokeWidth={1.6} height={26} width={26} color={colors.gray} />,
+    },
+  ];
 
   return (
     <ScreenWrapper bg="white">
@@ -68,34 +94,19 @@ const SignupScreen = () => {
         </View>
         <View style={styles.form}>
           <Text style={styles.instructionText}>Please sign up to continue ...</Text>
-          <Input
-            icon={<IconEmail strokeWidth={1.6} height={25} width={25} color={colors.gray} />}
-            placeholder="Enter Your Email"
-            placeholderTextColor={colors.gray}
-            onChangeText={setEmail}
-            keyboardType="email-address"
-            value={email}
-          />
-          <Input
-            icon={<IconPassword strokeWidth={1.6} height={26} width={26} color={colors.gray} />}
-            placeholder="Enter Your Password"
-            placeholderTextColor={colors.gray}
-            onChangeText={setPassword}
-            secureTextEntry
-            value={password}
-          />
-          <Input
-            icon={<IconPassword strokeWidth={1.6} height={26} width={26} color={colors.gray} />}
-            placeholder="Confirm Your Password"
-            placeholderTextColor={colors.gray}
-            onChangeText={setConfirmPassword}
-            secureTextEntry
-            value={confirmPassword}
-          />
-          <Button title="Sign Up" buttonStyle={styles.signupButton} onPress={onSubmit} loading={loading} />
+          {inputConfig.map(({ key, ...props }) => (
+            <Input
+              key={key}
+              {...props}
+              value={formData[key]}
+              onChangeText={(value) => handleChange(key, value)}
+              placeholderTextColor={colors.gray}
+            />
+          ))}
+          <Button title="Sign Up" buttonStyle={styles.signupButton} onPress={handleSignup} loading={loading} />
           <View style={styles.footer}>
             <Text style={styles.footerText}>Already have an account?</Text>
-            <Pressable onPress={handleLogin}>
+            <Pressable onPress={() => router.replace('/signIn')}>
               <Text style={styles.loginLink}>Log in</Text>
             </Pressable>
           </View>

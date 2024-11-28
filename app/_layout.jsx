@@ -13,7 +13,7 @@ const _layout = () => {
 }
 
 const MainLayout = () => {
-  const { setAuth, setUser } = useAuth();
+  const { setAuth, user, setUser } = useAuth();
   const router = useRouter();
   useEffect(() => {
     supabase.auth.onAuthStateChange((_event, session) => {

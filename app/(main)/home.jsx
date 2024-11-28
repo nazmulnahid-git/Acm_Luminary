@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, StatusBar, Alert } from 'react-native';
+import { View, StyleSheet, StatusBar, Alert, Text } from 'react-native';
 import Button from '../../components/Button';
 import { supabase } from '../../lib/supabase';
 import { hp, wp } from '@/helpers/common';
 import { useRouter } from 'expo-router';
 import ScreenWrapper from '../../components/ScreenWrapper';
 import { theme } from '../../constants/theme';
+import { useAuth } from '../../contexts/AuthContext';
 
 const Home = () => {
+  const { user } = useAuth();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const onSubmit = async () => {
@@ -25,6 +27,8 @@ const Home = () => {
     <ScreenWrapper bg="white">
       <StatusBar style="dark" />
       <View style={styles.container}>
+        <Text style={styles.welcomeText}>{`Welcome ${user?.name}`}</Text>
+        <Text style={styles.welcomeText}>{user?.email}</Text>
         <Button
           title="Logout"
           buttonStyle={styles.logoutButton}

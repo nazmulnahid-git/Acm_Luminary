@@ -24,7 +24,7 @@ const HomeScreen = () => {
           style={styles.logo}
         />
         <Image
-          source={require('@/assets/images/programmer.jpg')}
+          source={require('@/assets/images/programmer.png')}
           style={styles.image}
         />
         <Text style={styles.title}>

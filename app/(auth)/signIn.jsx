@@ -1,5 +1,5 @@
+import React, { useState, useCallback } from 'react';
 import { Text, Pressable, View, StyleSheet, StatusBar, Alert } from 'react-native';
-import React, { useState } from 'react';
 import { useRouter } from 'expo-router';
 import ScreenWrapper from '../../components/ScreenWrapper';
 import { hp, wp } from '@/helpers/common';
@@ -14,42 +14,63 @@ const { colors } = theme;
 
 const LoginScreen = () => {
   const router = useRouter();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [formData, setFormData] = useState({ email: '', password: '' });
   const [loading, setLoading] = useState(false);
 
-  const handleSignup = () => {
-    router.replace('/signUp');
+  const handleChange = (key, value) => {
+    setFormData((prev) => ({ ...prev, [key]: value }));
   };
 
-  const isValidEmail = (email) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  };
-
-  const onSubmit = async () => {
+  const validateForm = useCallback(() => {
+    const { email, password } = formData;
     if (!email || !password) {
-      Alert.alert('Please', 'Enter both email and password to login');
-      return;
+      return 'Please enter both email and password to login.';
     }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return 'Please enter a valid email address.';
+    }
+    if (password.length < 6) {
+      return 'Password must be at least 6 characters long.';
+    }
+    return null;
+  }, [formData]);
 
-    if (!isValidEmail(email)) {
-      Alert.alert('Invalid Email', 'Please enter a valid email address');
+  const handleLogin = async () => {
+    const errorMessage = validateForm();
+    if (errorMessage) {
+      Alert.alert('Error', errorMessage);
       return;
     }
 
     setLoading(true);
-    const { data: { session }, error } = await supabase.auth.signInWithPassword({
-      email: email,
-      password: password,
-    });
-
-    if (error) {
-      Alert.alert('Failed', error.message);
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email: formData.email,
+        password: formData.password,
+      });
+      if (error) throw new Error(error.message);
+    } catch (err) {
+      Alert.alert('Login Failed', err.message);
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
+
+  const inputConfig = [
+    {
+      key: 'email',
+      placeholder: 'Enter Your Email',
+      keyboardType: 'email-address',
+      icon: <IconEmail strokeWidth={1.6} height={25} width={25} color={colors.gray} />,
+    },
+    {
+      key: 'password',
+      placeholder: 'Enter Your Password',
+      secureTextEntry: true,
+      icon: <IconPassword strokeWidth={1.6} height={26} width={26} color={colors.gray} />,
+    },
+  ];
 
   return (
     <ScreenWrapper bg="white">
@@ -62,27 +83,20 @@ const LoginScreen = () => {
         </View>
         <View style={styles.form}>
           <Text style={styles.instructionText}>Please log in to continue ...</Text>
-          <Input
-            icon={<IconEmail strokeWidth={1.6} height={25} width={25} color={colors.gray} />}
-            placeholder="Enter Your Email"
-            placeholderTextColor={colors.gray}
-            onChangeText={setEmail}
-            keyboardType="email-address"
-            value={email}
-          />
-          <Input
-            icon={<IconPassword strokeWidth={1.6} height={26} width={26} color={colors.gray} />}
-            placeholder="Enter Your Password"
-            placeholderTextColor={colors.gray}
-            onChangeText={setPassword}
-            secureTextEntry
-            value={password}
-          />
+          {inputConfig.map(({ key, ...props }) => (
+            <Input
+              key={key}
+              {...props}
+              value={formData[key]}
+              onChangeText={(value) => handleChange(key, value)}
+              placeholderTextColor={colors.gray}
+            />
+          ))}
           <Text style={styles.forgotPassword}>Forgot Password?</Text>
-          <Button title="Login" buttonStyle={styles.loginButton} onPress={onSubmit} loading={loading} />
+          <Button title="Login" buttonStyle={styles.loginButton} onPress={handleLogin} loading={loading} />
           <View style={styles.footer}>
             <Text style={styles.footerText}>Don't have an account?</Text>
-            <Pressable onPress={handleSignup}>
+            <Pressable onPress={() => router.replace('/signUp')}>
               <Text style={styles.signupLink}>Sign up</Text>
             </Pressable>
           </View>

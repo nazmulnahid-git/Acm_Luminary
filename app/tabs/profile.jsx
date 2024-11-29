@@ -8,7 +8,7 @@ import ScreenWrapper from '../../components/ScreenWrapper';
 import { theme } from '../../constants/theme';
 import { useAuth } from '../../contexts/AuthContext';
 
-const Home = () => {
+const ProfileScreen = () => {
   const { user } = useAuth();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -57,6 +57,6 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Home;
+export default ProfileScreen;
 
 

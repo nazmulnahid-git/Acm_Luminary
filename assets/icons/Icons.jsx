@@ -81,7 +81,62 @@ export const IconCommunity = ({
   </Svg>
 );
 
-export const IconNotification = ({
+export const IconEvent = ({
+  width,
+  height,
+  color,
+  strokeWidth,
+  ...props
+}) => (
+  <Svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    width={width || 24}
+    height={height || 24}
+    color={color || "#000000"}
+    fill="none"
+    {...props}
+  >
+    <Path
+      d="M18 2V4M6 2V4"
+      stroke={color || "currentColor"}
+      strokeWidth={strokeWidth || 1.5}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <Path
+      d="M11.9955 13H12.0045M11.9955 17H12.0045M15.991 13H16M8 13H8.00897M8 17H8.00897"
+      stroke={color || "currentColor"}
+      strokeWidth={strokeWidth || 2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <Path
+      d="M3.5 8H20.5"
+      stroke={color || "currentColor"}
+      strokeWidth={strokeWidth || 1.5}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <Path
+      d="M2.5 12.2432C2.5 7.88594 2.5 5.70728 3.75212 4.35364C5.00424 3 7.01949 3 11.05 3H12.95C16.9805 3 18.9958 3 20.2479 4.35364C21.5 5.70728 21.5 7.88594 21.5 12.2432V12.7568C21.5 17.1141 21.5 19.2927 20.2479 20.6464C18.9958 22 16.9805 22 12.95 22H11.05C7.01949 22 5.00424 22 3.75212 20.6464C2.5 19.2927 2.5 17.1141 2.5 12.7568V12.2432Z"
+      stroke={color || "currentColor"}
+      strokeWidth={strokeWidth || 1.5}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <Path
+      d="M3 8H21"
+      stroke={color || "currentColor"}
+      strokeWidth={strokeWidth || 1.5}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </Svg>
+);
+
+
+export const IconNotificationOld = ({
   width,
   height,
   color,
@@ -124,6 +179,41 @@ export const IconNotification = ({
     />
   </Svg>
 );
+
+
+export const IconNotification = ({
+  width,
+  height,
+  color,
+  strokeWidth,
+  ...props
+}) => (
+  <Svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    width={width || 24}
+    height={height || 24}
+    color={color || "#000000"}
+    fill="none"
+    {...props}
+  >
+    <Path
+      d="M2.52992 14.394C2.31727 15.7471 3.268 16.6862 4.43205 17.1542C8.89481 18.9486 15.1052 18.9486 19.5679 17.1542C20.732 16.6862 21.6827 15.7471 21.4701 14.394C21.3394 13.5625 20.6932 12.8701 20.2144 12.194C19.5873 11.2975 19.525 10.3197 19.5249 9.27941C19.5249 5.2591 16.1559 2 12 2C7.84413 2 4.47513 5.2591 4.47513 9.27941C4.47503 10.3197 4.41272 11.2975 3.78561 12.194C3.30684 12.8701 2.66061 13.5625 2.52992 14.394Z"
+      stroke={color || "#000000"}
+      strokeWidth={strokeWidth || 1.5}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <Path
+      d="M9 21C9.79613 21.6219 10.8475 22 12 22C13.1525 22 14.2039 21.6219 15 21"
+      stroke={color || "#000000"}
+      strokeWidth={strokeWidth || 1.5}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </Svg>
+);
+
 
 export const IconProfile = ({
   width,

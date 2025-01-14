@@ -4,6 +4,8 @@ import ScreenWrapper from '@/components/ScreenWrapper'
 import { theme } from '../../constants/theme'
 import { hp, wp } from '@/helpers/common';
 import { IconNotification, IconPlus, IconProfile } from '../../assets/icons/Icons';
+import { router } from 'expo-router';
+import Avatar from '../../components/Avatar';
 
 
 const HomeScreen = () => {
@@ -13,14 +15,14 @@ const HomeScreen = () => {
         <View style={styles.header}>
           <Text style={styles.title}>ACM Luminary</Text>
           <View style={styles.icons}>
-            <Pressable>
+            <Pressable onPress={() => router.push('tabs/notifications')}>
               <IconNotification strokeWidth={1.6} height={hp(3.2)} width={hp(3.2)} color={theme.colors.text} />
             </Pressable>
-            <Pressable>
+            <Pressable onPress={() => router.push('createPost')}>
               <IconPlus strokeWidth={1.6} height={hp(3.2)} width={hp(3.2)} color={theme.colors.text} />
             </Pressable>
-            <Pressable>
-              <IconProfile strokeWidth={1.6} height={hp(3.2)} width={hp(3.2)} color={theme.colors.text} />
+            <Pressable onPress={() => router.push('tabs/profile')}>
+              <Avatar />
             </Pressable>
           </View>
         </View>

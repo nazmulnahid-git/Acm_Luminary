@@ -12,7 +12,7 @@ const Avatar = ({
 }) => {
   return (
     <Image
-      source={{ uri }}
+      source={uri}
       transition={100}
       style={[
         styles.avatar,

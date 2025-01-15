@@ -6,9 +6,13 @@ import { hp, wp } from '@/helpers/common';
 import { IconNotification, IconPlus, IconProfile } from '../../assets/icons/Icons';
 import { router } from 'expo-router';
 import Avatar from '../../components/Avatar';
+import { useAuth } from '../../contexts/AuthContext';
+import { getUserImageSource } from '../../services/ImageService';
 
 
 const HomeScreen = () => {
+  const { user } = useAuth();
+  console.log(user);
   return (
     <ScreenWrapper bg="white">
       <View style={styles.container}>
@@ -16,13 +20,23 @@ const HomeScreen = () => {
           <Text style={styles.title}>ACM Luminary</Text>
           <View style={styles.icons}>
             <Pressable onPress={() => router.push('tabs/notifications')}>
-              <IconNotification strokeWidth={1.6} height={hp(3.2)} width={hp(3.2)} color={theme.colors.text} />
+              <IconNotification strokeWidth={1.6} height={hp(3.5)} width={hp(3.5)} color={theme.colors.text} />
             </Pressable>
             <Pressable onPress={() => router.push('createPost')}>
-              <IconPlus strokeWidth={1.6} height={hp(3.2)} width={hp(3.2)} color={theme.colors.text} />
+              <IconPlus strokeWidth={1.6} height={hp(3.5)} width={hp(3.5)} color={theme.colors.text} />
             </Pressable>
             <Pressable onPress={() => router.push('tabs/profile')}>
-              <Avatar />
+              <Avatar
+                uri={getUserImageSource(user?.profile_img)}
+                size={hp(4)}
+                rounded={theme.radius.sm}
+                styles={
+                  {
+                    borderWidth: 1.5,
+                    borderColor: theme.colors.gray,
+                  }
+                }
+              />
             </Pressable>
           </View>
         </View>

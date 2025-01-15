@@ -68,6 +68,9 @@ const UserHeader = ({ user, router, handleLogout }) => {
               <IconEdit strokeWidth={1.5} height={20} width={20} />
             </Pressable>
           </View>
+          <View style={{ alignItems: 'center', gap: 4 }}>
+            <Text style={styles.userName}>{user?.name}</Text>
+          </View>
         </View>
 
       </View>

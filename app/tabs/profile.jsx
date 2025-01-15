@@ -7,21 +7,34 @@ import ScreenWrapper from '../../components/ScreenWrapper';
 import { theme } from '../../constants/theme';
 import { useAuth } from '../../contexts/AuthContext';
 import Header from '../../components/Header';
-import { IconLogout } from '../../assets/icons/Icons';
+import { IconEdit, IconLogout } from '../../assets/icons/Icons';
+import Avatar from '../../components/Avatar';
+import { getUserImageSource } from '../../services/ImageService';
 
 const ProfileScreen = () => {
   const { user, setAuth } = useAuth();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const handleLogout = async () => {
-    setLoading(true);
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      Alert.alert('Error', error.message);
-    } else {
-      router.replace('/welcome');
-      setLoading(false);
-    }
+    Alert.alert('Logout', 'Are you sure you want to logout?', [
+      {
+        text: 'Cancel',
+        style: 'cancel',
+      },
+      {
+        text: 'Logout',
+        onPress: async () => {
+          setLoading(true);
+          const { error } = await supabase.auth.signOut();
+          if (error) {
+            Alert.alert('Error', error.message);
+          } else {
+            router.replace('/welcome');
+            setLoading(false);
+          }
+        }
+      }
+    ])
   };
 
 
@@ -38,10 +51,25 @@ const UserHeader = ({ user, router, handleLogout }) => {
   return (
     <View style={{ flex: 1, backgroundColor: 'white', paddingHorizontal: wp(4) }}>
       <View>
-        <Header title={'Profile'} showBackButton={true} />
+        <Header title={'Profile'} mb={30} />
         <Pressable onPress={handleLogout} style={styles.logoutButton}>
           <IconLogout strokeWidth={1.6} height={hp(3.5)} width={hp(3.5)} color={theme.colors.text} />
         </Pressable>
+      </View>
+      <View style={styles.container}>
+        <View style={{ gap: 15 }}>
+          <View style={styles.avatarContainer}>
+            <Avatar
+              uri={getUserImageSource(user?.profile_img)}
+              size={hp(12)}
+              rounded={theme.radius.xxl * 1.4}
+            />
+            <Pressable onPress={() => { router.push('tabs/editProfile') }} style={styles.editIcon}>
+              <IconEdit strokeWidth={1.5} height={20} width={20} />
+            </Pressable>
+          </View>
+        </View>
+
       </View>
     </View>
   )

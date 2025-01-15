@@ -7,7 +7,7 @@ import { theme } from '../constants/theme';
 
 const Header = ({
   title,
-  showBackButton = false,
+  showBackButton = true,
   mb = 10
 }) => {
   const router = useRouter();

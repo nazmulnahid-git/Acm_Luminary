@@ -8,7 +8,7 @@ const Avatar = ({
   uri,
   size = hp(4.5),
   rounded = theme.radius.md,
-  styles = {}
+  style = {}
 }) => {
   return (
     <Image
@@ -16,7 +16,7 @@ const Avatar = ({
       transition={100}
       style={[
         styles.avatar,
-        styles,
+        style,
         {
           width: size,
           height: size,

@@ -1,18 +1,19 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, StatusBar, Alert, Text } from 'react-native';
-import Button from '../../components/Button';
+import { View, StyleSheet, StatusBar, Alert, Text, Pressable } from 'react-native';
 import { supabase } from '../../lib/supabase';
 import { hp, wp } from '@/helpers/common';
-import { useRouter } from 'expo-router';
+import { router, useRouter } from 'expo-router';
 import ScreenWrapper from '../../components/ScreenWrapper';
 import { theme } from '../../constants/theme';
 import { useAuth } from '../../contexts/AuthContext';
+import Header from '../../components/Header';
+import { IconLogout } from '../../assets/icons/Icons';
 
 const ProfileScreen = () => {
-  const { user } = useAuth();
+  const { user, setAuth } = useAuth();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const onSubmit = async () => {
+  const handleLogout = async () => {
     setLoading(true);
     const { error } = await supabase.auth.signOut();
     if (error) {
@@ -23,38 +24,93 @@ const ProfileScreen = () => {
     }
   };
 
+
   return (
     <ScreenWrapper bg="white">
-      <StatusBar style="dark" />
-      <View style={styles.container}>
-        <Text style={styles.welcomeText}>{`Welcome ${user?.name}`}</Text>
-        <Text style={styles.welcomeText}>{user?.email}</Text>
-        <Button
-          title="Logout"
-          buttonStyle={styles.logoutButton}
-          onPress={onSubmit}
-          loading={loading}
-        />
-      </View>
+      <UserHeader user={user} router={router} handleLogout={handleLogout} />
     </ScreenWrapper>
   );
 };
 
+
+const UserHeader = ({ user, router, handleLogout }) => {
+
+  return (
+    <View style={{ flex: 1, backgroundColor: 'white', paddingHorizontal: wp(4) }}>
+      <View>
+        <Header title={'Profile'} showBackButton={true} />
+        <Pressable onPress={handleLogout} style={styles.logoutButton}>
+          <IconLogout strokeWidth={1.6} height={hp(3.5)} width={hp(3.5)} color={theme.colors.text} />
+        </Pressable>
+      </View>
+    </View>
+  )
+}
+
+
+
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: 'center',
+    flex: 1
+  },
+  headerContainer: {
+    marginHorizontal: wp(4),
+    marginBottom: 20,
+  },
+  headerShape: {
+    height: hp(4),
+    width: wp(100),
+  },
+  avatarContainer: {
+    height: hp(12),
+    width: hp(12),
+    alignSelf: 'center',
+  },
+  editIcon: {
+    position: 'absolute',
+    bottom: 0,
+    right: -12,
+    padding: 7,
+    borderRadius: 50,
+    backgroundColor: 'white',
+    shadowColor: theme.colors.textLight,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.4,
+    shadowRadius: 5,
+    elevation: 7,
+  },
+  userName: {
+    fontSize: hp(3),
+    fontWeight: '500',
+    color: theme.colors.textDark,
+  },
+  info: {
+    flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: wp(5),
+    gap: 10,
+  },
+  infoText: {
+    fontSize: hp(1.6),
+    fontWeight: '500',
+    color: theme.colors.textLight,
   },
   logoutButton: {
-    backgroundColor: theme.colors.danger,
-    width: wp(60),
-    height: hp(7),
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 8,
+    position: 'absolute',
+    right: 0,
+    padding: 5,
+    borderRadius: theme.radius.sm,
+    backgroundColor: '#fee2e2',
   },
+  listStyle: {
+    paddingHorizontal: wp(4),
+    paddingBottom: 30,
+  },
+  noPosts: {
+    fontSize: hp(2),
+    textAlign: 'center',
+    color: theme.colors.text,
+  },
+
 });
 
 export default ProfileScreen;

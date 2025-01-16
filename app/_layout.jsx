@@ -20,7 +20,7 @@ const MainLayout = () => {
       if (session) {
         setAuth(session?.user);
         updateUserData(session?.user?.id);
-        router.replace('/tabs');
+        router.replace('/home');
       } else {
         setAuth(null);
         router.replace('/welcome');

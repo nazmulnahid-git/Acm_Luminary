@@ -19,13 +19,13 @@ const HomeScreen = () => {
         <View style={styles.header}>
           <Text style={styles.title}>ACM Luminary</Text>
           <View style={styles.icons}>
-            <Pressable onPress={() => router.push('tabs/notifications')}>
+            <Pressable onPress={() => router.push('notifications')}>
               <IconNotification strokeWidth={1.6} height={hp(3.5)} width={hp(3.5)} color={theme.colors.text} />
             </Pressable>
-            <Pressable onPress={() => router.push('createPost')}>
+            <Pressable onPress={() => router.push('newPost')}>
               <IconPlus strokeWidth={1.6} height={hp(3.5)} width={hp(3.5)} color={theme.colors.text} />
             </Pressable>
-            <Pressable onPress={() => router.push('tabs/profile')}>
+            <Pressable onPress={() => router.push('profile')}>
               <Avatar
                 uri={getUserImageSource(user?.profile_img)}
                 size={hp(4)}

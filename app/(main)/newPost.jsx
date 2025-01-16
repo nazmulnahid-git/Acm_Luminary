@@ -1,15 +1,17 @@
-import { View, Text } from 'react-native'
+import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import ScreenWrapper from '@/components/ScreenWrapper'
 
-const CommunityScreen = () => {
+const NewPostScreen = () => {
   return (
     <ScreenWrapper bg='white'>
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Text>Community</Text>
+        <Text>NewPostScreen</Text>
       </View>
     </ScreenWrapper>
   )
 }
 
-export default CommunityScreen;
+export default NewPostScreen
+
+const styles = StyleSheet.create({})

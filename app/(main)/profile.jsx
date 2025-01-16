@@ -64,7 +64,7 @@ const UserHeader = ({ user, router, handleLogout }) => {
               size={hp(12)}
               rounded={theme.radius.xxl * 1.4}
             />
-            <Pressable onPress={() => { router.push('tabs/editProfile') }} style={styles.editIcon}>
+            <Pressable onPress={() => { router.push('editProfile') }} style={styles.editIcon}>
               <IconEdit strokeWidth={1.5} height={20} width={20} />
             </Pressable>
           </View>

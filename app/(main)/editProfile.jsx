@@ -1,4 +1,4 @@
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Pressable, ScrollView, StyleSheet, Text, ToastAndroid, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import ScreenWrapper from '@/components/ScreenWrapper'
 import { hp, wp } from '@/helpers/common';
@@ -7,16 +7,40 @@ import Header from '../../components/Header';
 import { Image } from 'expo-image';
 import { getUserImageSource } from '../../services/ImageService';
 import { useAuth } from '../../contexts/AuthContext';
-import { IconCamera, IconLocation, IconPhone, IconProfile } from '../../assets/icons/Icons';
+import { IconCamera, IconLocation, IconPhone, IconProfile, IconEmail } from '../../assets/icons/Icons';
 import Input from '../../components/Input';
 import Button from '../../components/Button'
+import { updateUserData } from '../../services/UserService';
+import { useRouter } from 'expo-router';
 
 const EditProfileScreen = () => {
-  const { user: currentUser } = useAuth();
+  const router = useRouter();
+  const { user: currentUser, setUserData } = useAuth();
   const [user, setUser] = useState({})
   const [loading, setLoading] = useState(false);
-  const update = () => {
-
+  const update = async () => {
+    if (!user.name) {
+      ToastAndroid.show('Name is required!', ToastAndroid.SHORT);
+      return;
+    } else {
+      if (!user.email) {
+        ToastAndroid.show('Email is required!', ToastAndroid.SHORT);
+        return;
+      }
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(user.email)) {
+        ToastAndroid.show('Please enter a valid email address!', ToastAndroid.SHORT);
+        return;
+      }
+    }
+    setLoading(true);
+    const res = await updateUserData(currentUser.id, user);
+    setLoading(false);
+    if (res.success) {
+      setUserData({ ...currentUser, ...user });
+      ToastAndroid.show('Profile Updated Successfully', ToastAndroid.SHORT);
+      router.back();
+    }
   }
   useEffect(() => {
     setUser({
@@ -24,6 +48,7 @@ const EditProfileScreen = () => {
       profile_img: currentUser.profile_img || null,
       bio: currentUser.bio || '',
       phone_no: currentUser.phone_no || '',
+      email: currentUser.email || '',
       address: currentUser.address || '',
     })
   }, [currentUser])
@@ -54,6 +79,14 @@ const EditProfileScreen = () => {
               placeholderTextColor={theme.colors.gray}
               value={user.name}
               onChangeText={value => setUser({ ...user, name: value })}
+            />
+            <Input
+              icon={<IconEmail strokeWidth={1.6} height={25} width={25} color={theme.colors.gray} />}
+              placeholder='Enter Your Email'
+              keyboardType='email-address'
+              placeholderTextColor={theme.colors.gray}
+              value={user.email}
+              onChangeText={value => setUser({ ...user, email: value })}
             />
             <Input
               icon={<IconPhone strokeWidth={1.6} height={25} width={25} color={theme.colors.gray} />}

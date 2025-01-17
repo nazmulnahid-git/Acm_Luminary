@@ -10,7 +10,6 @@ const Header = ({
   showBackButton = true,
   mb = 10
 }) => {
-  const router = useRouter();
   return (
     <View style={[styles.container, { marginBottom: mb }]}>
       {

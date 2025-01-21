@@ -1,47 +1,52 @@
-import { Pressable, ScrollView, StyleSheet, Text, ToastAndroid, View } from 'react-native'
-import React, { useEffect, useState } from 'react'
-import ScreenWrapper from '@/components/ScreenWrapper'
+import Input from '../../components/Input';
+import Header from '../../components/Header';
+import Button from '../../components/Button';
+import React, { useEffect, useState } from 'react';
+import ScreenWrapper from '@/components/ScreenWrapper';
+import { Image } from 'expo-image';
+import { useRouter } from 'expo-router';
 import { hp, wp } from '@/helpers/common';
 import { theme } from '../../constants/theme';
-import Header from '../../components/Header';
-import { Image } from 'expo-image';
-import { getUserImageSource } from '../../services/ImageService';
+import { cloudinary } from '../../lib/cloudinary';
 import { useAuth } from '../../contexts/AuthContext';
-import { IconCamera, IconLocation, IconPhone, IconProfile, IconEmail } from '../../assets/icons/Icons';
-import Input from '../../components/Input';
-import Button from '../../components/Button'
 import { updateUserData } from '../../services/UserService';
-import { useRouter } from 'expo-router';
+import { getUserImageSource } from '../../services/ImageService';
+import { Alert, Pressable, ScrollView, StyleSheet, Text, ToastAndroid, View } from 'react-native';
+import { IconCamera, IconLocation, IconPhone, IconProfile, IconEmail } from '../../assets/icons/Icons';
+import * as ImagePicker from 'expo-image-picker';
+
+// Utility function for validation
+const validateProfile = (user) => {
+  if (!user.name) return 'Name is required!';
+  if (!user.email) return 'Email is required!';
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(user.email)) return 'Please enter a valid email address!';
+  return null;
+};
+
+// Avatar component
+const Avatar = ({ imageSource, onPickImage }) => (
+  <View style={styles.avatarContainer}>
+    <Image source={imageSource} style={styles.avatar} />
+    <Pressable style={styles.cameraIcon} onPress={onPickImage}>
+      <IconCamera strokeWidth={1.5} height={20} width={20} />
+    </Pressable>
+  </View>
+);
 
 const EditProfileScreen = () => {
   const router = useRouter();
   const { user: currentUser, setUserData } = useAuth();
-  const [user, setUser] = useState({})
+  const [user, setUser] = useState({
+    name: '',
+    profile_img: null,
+    bio: '',
+    phone_no: '',
+    email: '',
+    address: '',
+  });
   const [loading, setLoading] = useState(false);
-  const update = async () => {
-    if (!user.name) {
-      ToastAndroid.show('Name is required!', ToastAndroid.SHORT);
-      return;
-    } else {
-      if (!user.email) {
-        ToastAndroid.show('Email is required!', ToastAndroid.SHORT);
-        return;
-      }
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(user.email)) {
-        ToastAndroid.show('Please enter a valid email address!', ToastAndroid.SHORT);
-        return;
-      }
-    }
-    setLoading(true);
-    const res = await updateUserData(currentUser.id, user);
-    setLoading(false);
-    if (res.success) {
-      setUserData({ ...currentUser, ...user });
-      ToastAndroid.show('Profile Updated Successfully', ToastAndroid.SHORT);
-      router.back();
-    }
-  }
+
   useEffect(() => {
     setUser({
       name: currentUser.name || '',
@@ -50,75 +55,125 @@ const EditProfileScreen = () => {
       phone_no: currentUser.phone_no || '',
       email: currentUser.email || '',
       address: currentUser.address || '',
-    })
-  }, [currentUser])
-  const ImageSource = getUserImageSource(currentUser?.profile_img);
-  const onPickImage = async () => {
+    });
+  }, [currentUser]);
 
-  }
+  const handleUpdate = async () => {
+    const errorMessage = validateProfile(user);
+    if (errorMessage) {
+      ToastAndroid.show(errorMessage, ToastAndroid.SHORT);
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const updatedUser = { ...user };
+
+      // Upload profile image
+      if (user.profile_img && typeof user.profile_img === 'object') {
+        const imageUrl = await cloudinary.uploadImage(user.profile_img.base64);
+        if (!imageUrl) throw new Error('Image upload failed');
+        updatedUser.profile_img = imageUrl;
+      }
+
+      const res = await updateUserData(currentUser.id, updatedUser);
+      if (!res.success) throw new Error('Update failed');
+
+      setUserData({ ...currentUser, ...updatedUser });
+      ToastAndroid.show('Profile Updated Successfully', ToastAndroid.SHORT);
+      router.back();
+    } catch (error) {
+      Alert.alert('Error', error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const onPickImage = async () => {
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        base64: true,
+        aspect: [1, 1],
+        quality: 0.7,
+      });
+
+      if (!result.canceled) {
+        setUser({ ...user, profile_img: result.assets[0] });
+      }
+    } catch {
+      Alert.alert('Error', 'Failed to pick image');
+    }
+  };
+
+  const imageSource =
+    user.profile_img && typeof user.profile_img === 'object'
+      ? user.profile_img.uri
+      : getUserImageSource(currentUser?.profile_img);
+
   return (
     <ScreenWrapper bg="white">
       <View style={styles.container}>
-        <ScrollView style={{ flex: 1 }}>
+        <ScrollView>
           <Header title="Edit Profile" />
 
-          {/* form */}
           <View style={styles.form}>
-            <View style={styles.avatarContainer}>
-              <Image source={ImageSource} style={styles.avatar} />
-              <Pressable style={styles.cameraIcon} onPress={onPickImage}>
-                <IconCamera strokeWidth={1.5} height={20} width={20} />
-              </Pressable>
-            </View>
-            <Text style={{ fontSize: hp(1.5), color: theme.colors.text }}>
-              Please fill your profile details
-            </Text>
+            <Avatar imageSource={imageSource} onPickImage={onPickImage} />
+
+            <Text style={styles.instructionText}>Please fill your profile details</Text>
+
             <Input
               icon={<IconProfile strokeWidth={1.6} height={25} width={25} color={theme.colors.gray} />}
               placeholder="Enter your name"
               placeholderTextColor={theme.colors.gray}
               value={user.name}
-              onChangeText={value => setUser({ ...user, name: value })}
+              onChangeText={(value) => setUser({ ...user, name: value })}
             />
+
             <Input
               icon={<IconEmail strokeWidth={1.6} height={25} width={25} color={theme.colors.gray} />}
-              placeholder='Enter Your Email'
-              keyboardType='email-address'
+              placeholder="Enter your email"
+              keyboardType="email-address"
               placeholderTextColor={theme.colors.gray}
               value={user.email}
-              onChangeText={value => setUser({ ...user, email: value })}
+              onChangeText={(value) => setUser({ ...user, email: value })}
             />
+
             <Input
               icon={<IconPhone strokeWidth={1.6} height={25} width={25} color={theme.colors.gray} />}
               placeholder="Enter your phone number"
               placeholderTextColor={theme.colors.gray}
               value={user.phone_no}
-              onChangeText={value => setUser({ ...user, phone_no: value })}
+              onChangeText={(value) => setUser({ ...user, phone_no: value })}
             />
+
             <Input
               icon={<IconLocation strokeWidth={1.6} height={25} width={25} color={theme.colors.gray} />}
               placeholder="Enter your address"
               placeholderTextColor={theme.colors.gray}
               value={user.address}
-              onChangeText={value => setUser({ ...user, address: value })}
+              onChangeText={(value) => setUser({ ...user, address: value })}
             />
+
             <Input
-              multiline={true}
+              multiline
               containerStyle={styles.bio}
               placeholder="Bio.."
               placeholderTextColor={theme.colors.gray}
               value={user.bio}
-              onChangeText={value => setUser({ ...user, bio: value })}
+              onChangeText={(value) => setUser({ ...user, bio: value })}
             />
-            <Button title={'Update'} loading={loading} onPress={update} />
+
+            <Button title="Update" loading={loading} onPress={handleUpdate} />
           </View>
         </ScrollView>
       </View>
     </ScreenWrapper>
-  )
-}
+  );
+};
 
-export default EditProfileScreen
+export default EditProfileScreen;
 
 const styles = StyleSheet.create({
   container: {
@@ -134,15 +189,8 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     borderRadius: theme.radius.xxl * 1.8,
-    borderCurve: 'continuous',
     borderWidth: 1,
     borderColor: theme.colors.darkLight,
-  },
-  bio: {
-    flexDirection: 'row',
-    height: hp(15),
-    alignItems: 'flex-start',
-    paddingVertical: 15,
   },
   cameraIcon: {
     position: 'absolute',
@@ -161,14 +209,14 @@ const styles = StyleSheet.create({
     gap: 18,
     marginTop: 20,
   },
-  input: {
-    flexDirection: 'row',
-    borderWidth: 0.4,
-    borderColor: theme.colors.text,
-    borderRadius: theme.radius.xxl,
-    borderCurve: 'continuous',
-    padding: 17,
-    paddingHorizontal: 20,
-    gap: 15,
+  instructionText: {
+    fontSize: hp(1.5),
+    color: theme.colors.text,
   },
-})
+  bio: {
+    flexDirection: 'row',
+    height: hp(15),
+    alignItems: 'flex-start',
+    paddingVertical: 15,
+  },
+});

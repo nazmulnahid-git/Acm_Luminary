@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View, ScrollView } from 'react-native'
-import React from 'react'
+import React, { useRef, useState } from 'react'
 import ScreenWrapper from '@/components/ScreenWrapper'
 import { hp, wp } from '@/helpers/common';
 import Header from '../../components/Header'
@@ -7,9 +7,15 @@ import { theme } from '../../constants/theme';
 import Avatar from '../../components/Avatar';
 import { useAuth } from '../../contexts/AuthContext';
 import RichTextEditor from '../../components/RichTextEditor';
+import { useRouter } from 'expo-router';
 
 const NewPostScreen = () => {
   const { user } = useAuth();
+  const router = useRouter();
+  const bodyRef = useRef('');
+  const editorRef = useRef(null);
+  const [loading, setLoading] = useState(false);
+  const [file, setFile] = useState([]);
   return (
     <ScreenWrapper bg='white'>
       <View style={styles.container}>
@@ -33,10 +39,10 @@ const NewPostScreen = () => {
               </Text>
             </View>
           </View>
+          <View style={styles.textEditor}>
+            <RichTextEditor editorRef={editorRef} onChange={(body) => bodyRef.current = body} />
+          </View>
         </ScrollView>
-      </View>
-      <View style={styles.textEditor}>
-        <RichTextEditor />
       </View>
     </ScreenWrapper>
   )
@@ -82,7 +88,7 @@ const styles = StyleSheet.create({
     color: theme.colors.textLight,
   },
   textEditor: {
-    marginTop: 10,
+    // marginTop: 10,
   },
   media: {
     flexDirection: 'row',

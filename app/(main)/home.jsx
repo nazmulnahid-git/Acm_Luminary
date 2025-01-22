@@ -55,7 +55,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    alignItems: 'center',
     marginBottom: 10,
     marginHorizontal: wp(4),
   },

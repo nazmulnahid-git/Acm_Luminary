@@ -9,7 +9,7 @@ const RichTextEditor = ({
 }) => {
   return (
     <View style={{ minHeight: 285 }}>
-      {/* <RichToolbar
+      <RichToolbar
         actions={[
           actions.setStrikethrough,
           actions.removeFormat,
@@ -45,7 +45,7 @@ const RichTextEditor = ({
         editorStyle={styles.contentStyle}
         placeholder={"Whats on your mind..?"}
         onChange={onChange}
-      /> */}
+      />
     </View>
   )
 }
@@ -64,6 +64,7 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
     borderColor: theme.colors.darkLight,
     borderBottomLeftRadius: theme.radius.xl,
+    borderBottomRightRadius: theme.radius.xl,
     padding: 5,
   },
   containerStyle: {

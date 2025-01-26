@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, ScrollView } from 'react-native'
+import { StyleSheet, Text, View, ScrollView, Pressable } from 'react-native'
 import React, { useRef, useState } from 'react'
 import ScreenWrapper from '@/components/ScreenWrapper'
 import { hp, wp } from '@/helpers/common';
@@ -8,6 +8,9 @@ import Avatar from '../../components/Avatar';
 import { useAuth } from '../../contexts/AuthContext';
 import RichTextEditor from '../../components/RichTextEditor';
 import { useRouter } from 'expo-router';
+import { IconGallery, IconVideo } from '../../assets/icons/Icons';
+import Button from '../../components/Button';
+import * as ImagePicker from 'expo-image-picker';
 
 const NewPostScreen = () => {
   const { user } = useAuth();
@@ -16,6 +19,25 @@ const NewPostScreen = () => {
   const editorRef = useRef(null);
   const [loading, setLoading] = useState(false);
   const [file, setFile] = useState([]);
+  const onPickImage = async () => {
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        base64: true,
+        aspect: [1, 1],
+        quality: 0.7,
+      });
+
+      if (!result.canceled) {
+        setUser({ ...user, profile_img: result.assets[0] });
+      }
+    } catch {
+      Alert.alert('Error', 'Failed to pick image');
+    }
+  };
+  const handlePost = async () => {
+  }
   return (
     <ScreenWrapper bg='white'>
       <View style={styles.container}>
@@ -42,7 +64,21 @@ const NewPostScreen = () => {
           <View style={styles.textEditor}>
             <RichTextEditor editorRef={editorRef} onChange={(body) => bodyRef.current = body} />
           </View>
+          <View style={styles.media}>
+            <Text style={styles.addImageText}>Add to your post</Text>
+            <View style={styles.mediaIcons}>
+              <Pressable onPress={pickImage}>
+                <IconGallery sstrokeWidth={1.5} height={25} width={25} color={theme.colors.text} />
+              </Pressable>
+              <Pressable onPress={onPickImage}>
+                <IconVideo sstrokeWidth={1.5} height={27} width={27} color={theme.colors.text} />
+              </Pressable>
+            </View>
+          </View>
         </ScrollView>
+        <Button
+          title={"Post"} onPress={handlePost} loading={loading}
+        />
       </View>
     </ScreenWrapper>
   )
@@ -99,7 +135,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 18,
     borderRadius: theme.radius.xl,
     borderCurve: 'continuous',
-    borderColor: theme.colors.gray,
+    borderColor: theme.colors.darkLight,
   },
   mediaIcons: {
     flexDirection: 'row',
@@ -112,7 +148,7 @@ const styles = StyleSheet.create({
     color: theme.colors.text,
   },
   imageIcon: {
-    backgroundColor: theme.colors.gray,
+    backgroundColor: theme.colors.darkLight,
     borderRadius: theme.radius.md,
     padding: 6,
   },

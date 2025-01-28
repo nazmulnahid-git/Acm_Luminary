@@ -7,10 +7,10 @@ export const createOrUpdatePost = async (post) => {
       let url;
       if (post.file.type == 'image') {
         url = await cloudinary.uploadImage(post.file.base64);
-        if (!url) throw new Error('Image upload failed'); 
+        if (!url) return {success: false};
       } else if (post.file.type == 'video') {
         url = await cloudinary.uploadVideo(post.file.uri);
-        if (!url) throw new Error('Video upload failed'); 
+        if (!url) return {success: false}; 
       }
       post.file = url;
     }
@@ -21,7 +21,6 @@ export const createOrUpdatePost = async (post) => {
     }
     return {success: true, data};
   } catch (error) {
-    ToastAndroid.show('Post Failed', ToastAndroid.SHORT);
     return {success: false};
   }
 }

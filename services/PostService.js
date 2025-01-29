@@ -6,8 +6,10 @@ export const getPost = async (limit = 10) => {
     const {data, error} = await supabase
     .from('posts')
     .select(`
-      *, users (id, name, profile_img)
-      `)
+      *,
+      users (id, name, profile_img),
+      postLike (*)
+    `)
     .order('created_at', {ascending: false})
     .limit(limit);
     if (error) {
@@ -44,9 +46,10 @@ export const createOrUpdatePost = async (post) => {
 }
 
 export const likePost = async (like) => {
+  console.log(like);
   try {
     const {data, error} = await supabase
-    .from('likes')
+    .from('postLike')
     .insert(like)
     .select()
     .single();

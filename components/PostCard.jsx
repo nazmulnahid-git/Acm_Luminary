@@ -1,5 +1,5 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import moment from 'moment'
 import { theme } from '../constants/theme'
 import { hp, wp } from '@/helpers/common';
@@ -8,6 +8,7 @@ import { IconComment, IconHeart, IconMenu, IconShare } from '../assets/icons/Ico
 import RenderHtml from 'react-native-render-html';
 import { Image } from 'expo-image';
 import { Video } from 'expo-av';
+import { likePost } from '../services/PostService';
 
 const PostCard = ({
   item,
@@ -41,14 +42,34 @@ const PostCard = ({
     shadowRadius: 10,
     elevation: 5,
   };
+  const [likes, setLikes] = useState([]);
+
+  useEffect(() => {
+    setLikes(item.postLike);
+  }, []);
+
   const createdAt = moment(item.created_at).format('MMM D');
 
   const openPostDetails = () => {
   }
 
+  const onLike = async () => {
+    console.log('Like button pressed');
+    let data = {
+      post_id: item.id,
+      user_id: item.users.id,
+    };
+    setLikes([...likes, data]);
+    const res = await likePost(data);
+    if (!res.success) {
+      ToastAndroid.show('Something went wrong!', ToastAndroid.SHORT);
+      return;
+    }
+  }
+
   const fileType = item.file && item.file.includes('image/upload') ? 'image' : 'video';
-  const liked = false;
-  const likes = [];
+  const liked = likes.filter(like => like.user_id == item.users.id).length > 0 ? true : false;
+  console.log(likes);
 
   return (
     <View style={[styles.container, hasShadow && shadowStyles]}>
@@ -102,6 +123,44 @@ const PostCard = ({
             )
           }
         </View>
+      </View>
+      <View style={styles.footer}>
+        <View style={styles.footerButton}>
+          <Pressable onPress={onLike}>
+            <IconHeart
+              strokeWidth={1.6}
+              height={hp(3.5)}
+              width={hp(3.5)}
+              color={theme.colors.roseLight}
+              fill={liked ? theme.colors.roseLight : 'none'}
+            />
+          </Pressable>
+          <Text style={styles.count}>
+            {likes?.length}
+          </Text>
+        </View>
+        <View style={styles.footerButton}>
+          <Pressable onPress={() => console.log("Comment button pressed")}>
+            <IconComment
+              strokeWidth={1.6}
+              height={hp(3.5)}
+              width={hp(3.5)}
+              color={theme.colors.text}
+            />
+          </Pressable>
+        </View>
+
+        <View style={styles.footerButton}>
+          <Pressable onPress={() => console.log("Share button pressed")}>
+            <IconShare
+              strokeWidth={1.6}
+              height={hp(3.5)}
+              width={hp(3.5)}
+              color={theme.colors.text}
+            />
+          </Pressable>
+        </View>
+
       </View>
 
 

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, StyleSheet, StatusBar, Alert, Text, Pressable } from 'react-native';
 import { supabase } from '../../lib/supabase';
 import { hp, wp } from '@/helpers/common';
-import { router, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
 import ScreenWrapper from '../../components/ScreenWrapper';
 import { theme } from '../../constants/theme';
 import { useAuth } from '../../contexts/AuthContext';
@@ -12,7 +12,7 @@ import Avatar from '../../components/Avatar';
 import { getUserImageSource } from '../../services/ImageService';
 
 const ProfileScreen = () => {
-  const { user, setAuth } = useAuth();
+  const { user } = useAuth();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const handleLogout = async () => {

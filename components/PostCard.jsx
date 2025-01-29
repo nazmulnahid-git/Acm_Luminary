@@ -53,19 +53,21 @@ const PostCard = ({
   const openPostDetails = () => {
   }
 
+  console.log(currentUser.id);
+
   const onLike = async () => {
     if (liked) {
-      const res = await removeLike(item.id, item.users.id);
+      const res = await removeLike(item.id, currentUser.id);
       if (!res.success) {
         ToastAndroid.show('Something went wrong!', ToastAndroid.SHORT);
         return;
       }
-      setLikes(likes.filter(like => like.user_id != item.users.id));
+      setLikes(likes.filter(like => like.user_id != currentUser.id));
       return;
     }
     let data = {
       post_id: item.id,
-      user_id: item.users.id,
+      user_id: currentUser.id,
     };
     setLikes([...likes, data]);
     const res = await likePost(data);
@@ -158,7 +160,7 @@ const PostCard = ({
           </Pressable>
         </View>
 
-        <View style={styles.footerButton}>
+        {/* <View style={styles.footerButton}>
           <Pressable onPress={() => console.log("Share button pressed")}>
             <IconShare
               strokeWidth={1.6}
@@ -167,7 +169,7 @@ const PostCard = ({
               color={theme.colors.text}
             />
           </Pressable>
-        </View>
+        </View> */}
 
       </View>
 

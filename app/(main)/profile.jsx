@@ -7,7 +7,7 @@ import ScreenWrapper from '../../components/ScreenWrapper';
 import { theme } from '../../constants/theme';
 import { useAuth } from '../../contexts/AuthContext';
 import Header from '../../components/Header';
-import { IconEdit, IconLogout } from '../../assets/icons/Icons';
+import { IconEdit, IconEmail, IconLocation, IconLogout, IconPhone } from '../../assets/icons/Icons';
 import Avatar from '../../components/Avatar';
 import { getUserImageSource } from '../../services/ImageService';
 
@@ -70,6 +70,28 @@ const UserHeader = ({ user, router, handleLogout }) => {
           </View>
           <View style={{ alignItems: 'center', gap: 4 }}>
             <Text style={styles.userName}>{user?.name}</Text>
+            <Text style={styles.infoText}>{user?.bio}</Text>
+          </View>
+
+          <View style={{ gap: 10 }}>
+            {user && user.phone_no && (
+              <View style={styles.info}>
+                <IconPhone strokeWidth={1} height={20} width={20} color={theme.colors.text} />
+                <Text style={styles.infoText}>{user.phone_no}</Text>
+              </View>
+            )}
+            {user?.email && (
+              <View style={styles.info}>
+                <IconEmail strokeWidth={1} height={20} width={20} color={theme.colors.text} />
+                <Text style={styles.infoText}>{user?.email}</Text>
+              </View>
+            )}
+            {user?.address && (
+              <View style={styles.info}>
+                <IconLocation strokeWidth={1} height={20} width={20} color={theme.colors.text} />
+                <Text style={styles.infoText}>{user?.address}</Text>
+              </View>
+            )}
           </View>
         </View>
 

@@ -149,7 +149,7 @@ const PostCard = ({
             {likes?.length}
           </Text>
         </View>
-        <View style={styles.footerButton}>
+        {/* <View style={styles.footerButton}>
           <Pressable onPress={() => console.log("Comment button pressed")}>
             <IconComment
               strokeWidth={1.6}
@@ -158,7 +158,7 @@ const PostCard = ({
               color={theme.colors.text}
             />
           </Pressable>
-        </View>
+        </View> */}
 
         {/* <View style={styles.footerButton}>
           <Pressable onPress={() => console.log("Share button pressed")}>

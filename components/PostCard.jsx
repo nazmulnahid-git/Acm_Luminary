@@ -8,7 +8,7 @@ import { IconComment, IconHeart, IconMenu, IconShare } from '../assets/icons/Ico
 import RenderHtml from 'react-native-render-html';
 import { Image } from 'expo-image';
 import { Video } from 'expo-av';
-import { likePost } from '../services/PostService';
+import { likePost, removeLike } from '../services/PostService';
 
 const PostCard = ({
   item,
@@ -54,7 +54,15 @@ const PostCard = ({
   }
 
   const onLike = async () => {
-    console.log('Like button pressed');
+    if (liked) {
+      const res = await removeLike(item.id, item.users.id);
+      if (!res.success) {
+        ToastAndroid.show('Something went wrong!', ToastAndroid.SHORT);
+        return;
+      }
+      setLikes(likes.filter(like => like.user_id != item.users.id));
+      return;
+    }
     let data = {
       post_id: item.id,
       user_id: item.users.id,

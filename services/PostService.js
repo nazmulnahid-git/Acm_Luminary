@@ -63,17 +63,17 @@ export const likePost = async (like) => {
   }
 }
 
-export const removeLike = async (postId, userId) => {
+export const removeLike = async (post_id, user_id) => {
   try {
     const { error } = await supabase
-      .from('postLikes')
+      .from('postLike')
       .delete()
-      .eq('userId', userId)
-      .eq('postId', postId);
+      .eq('user_id', user_id)
+      .eq('post_id', post_id);
     if (error) {
       return {success: false};
     }
-    return {success: true, data};
+    return {success: true};
   } catch (error) {
     return {success: false};
   }

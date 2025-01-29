@@ -1,5 +1,5 @@
-import { View, Text, StyleSheet, Pressable } from 'react-native'
-import React from 'react'
+import { View, Text, StyleSheet, Pressable, ToastAndroid, FlatList } from 'react-native'
+import React, { useEffect, useState } from 'react'
 import ScreenWrapper from '@/components/ScreenWrapper'
 import { theme } from '../../constants/theme'
 import { hp, wp } from '@/helpers/common';
@@ -8,11 +8,47 @@ import { router } from 'expo-router';
 import Avatar from '../../components/Avatar';
 import { useAuth } from '../../contexts/AuthContext';
 import { getUserImageSource } from '../../services/ImageService';
+import { getPost } from '../../services/PostService';
+import PostCard from '../../components/PostCard';
+import Loading from '../../components/Loading';
+import { supabase } from '../../lib/supabase';
 
-
+let limit = 10;
 const HomeScreen = () => {
   const { user } = useAuth();
-  console.log(user);
+  const [posts, setPosts] = useState([]);
+  const handlePostEvent = async (payload) => {
+    console.log(payload);
+    if (payload.eventType == 'INSERT' && payload.new?.id) {
+      let newPost = { ...payload.new };
+      let res = await getUserData(newPost.userId);
+      newPost.user = res.success ? res.data : {};
+      setPosts(prevPosts => [newPost, ...prevPosts]);
+    }
+  }
+  useEffect(() => {
+    const fetchPosts = async () => {
+      limit = limit + 10;
+      const res = await getPost(limit);
+      if (res.success) {
+        setPosts(res.data);
+        console.log(res.data);
+      } else {
+        ToastAndroid.show('Could not load posts!', ToastAndroid.SHORT);
+      }
+    };
+    const postChannel = supabase
+      .channel('posts')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'posts' }, handlePostEvent)
+      .subscribe();
+
+    fetchPosts();
+
+    return () => {
+      supabase.removeChannel(postChannel);
+    };
+  }, [])
+
   return (
     <ScreenWrapper bg="white">
       <View style={styles.container}>
@@ -40,6 +76,25 @@ const HomeScreen = () => {
             </Pressable>
           </View>
         </View>
+        <FlatList
+          data={posts}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.listStyle}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => (
+            <PostCard
+              item={item}
+              currentUser={user}
+              router={router}
+              shadow={true}
+            />
+          )}
+          ListFooterComponent={
+            <View style={{ marginVertical: posts.length ? 30 : 200 }}>
+              <Loading />
+            </View>
+          }
+        />
       </View>
     </ScreenWrapper>
   )
@@ -78,5 +133,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     gap: 18,
+  },
+  listStyle: {
+    paddingTop: 20,
+    paddingHorizontal: wp(4),
   }
 })

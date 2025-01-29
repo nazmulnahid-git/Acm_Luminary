@@ -1,6 +1,24 @@
 import { cloudinary } from "../lib/cloudinary";
 import { supabase } from "../lib/supabase";
 
+export const getPost = async (limit = 10) => {
+  try {
+    const {data, error} = await supabase
+    .from('posts')
+    .select(`
+      *, users (id, name, profile_img)
+      `)
+    .order('created_at', {ascending: false})
+    .limit(limit);
+    if (error) {
+      return {success: false};
+    }
+    return {success: true, data};
+  } catch (error) {
+    return {success: false};
+  }
+}
+
 export const createOrUpdatePost = async (post) => {
   try {
     if (post.file && typeof post.file === 'object') {

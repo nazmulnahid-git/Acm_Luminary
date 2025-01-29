@@ -42,3 +42,37 @@ export const createOrUpdatePost = async (post) => {
     return {success: false};
   }
 }
+
+export const likePost = async (like) => {
+  try {
+    const {data, error} = await supabase
+    .from('likes')
+    .insert(like)
+    .select()
+    .single();
+
+    if (error) {
+      return {success: false};
+    }
+    return {success: true, data};
+  } catch (error) {
+    return {success: false};
+  }
+}
+
+export const removeLike = async (postId, userId) => {
+  try {
+    const { error } = await supabase
+      .from('postLikes')
+      .delete()
+      .eq('userId', userId)
+      .eq('postId', postId);
+    if (error) {
+      return {success: false};
+    }
+    return {success: true, data};
+  } catch (error) {
+    return {success: false};
+  }
+}
+

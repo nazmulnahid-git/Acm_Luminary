@@ -13,10 +13,11 @@ import PostCard from '../../components/PostCard';
 import Loading from '../../components/Loading';
 import { supabase } from '../../lib/supabase';
 
-let limit = 10;
+let limit = 0;
 const HomeScreen = () => {
   const { user } = useAuth();
   const [posts, setPosts] = useState([]);
+  const [hasMore, setHasMore] = useState(true);
   const handlePostEvent = async (payload) => {
     console.log(payload);
     if (payload.eventType == 'INSERT' && payload.new?.id) {
@@ -27,27 +28,32 @@ const HomeScreen = () => {
     }
   }
   useEffect(() => {
-    const fetchPosts = async () => {
-      limit = limit + 10;
-      const res = await getPost(limit);
-      if (res.success) {
-        setPosts(res.data);
-        console.log(res.data);
-      } else {
-        ToastAndroid.show('Could not load posts!', ToastAndroid.SHORT);
-      }
-    };
+    // fetchPosts();
     const postChannel = supabase
       .channel('posts')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'posts' }, handlePostEvent)
       .subscribe();
 
-    fetchPosts();
 
     return () => {
       supabase.removeChannel(postChannel);
     };
   }, [])
+
+  const fetchPosts = async () => {
+    limit = limit + 10;
+    if (!hasMore) return null;
+    const res = await getPost(limit);
+    if (res.success) {
+      setPosts(res.data);
+      if (res.data.length === posts.length) {
+        setHasMore(false);
+      }
+      console.log(res.data);
+    } else {
+      ToastAndroid.show('Could not load posts!', ToastAndroid.SHORT);
+    }
+  };
 
   return (
     <ScreenWrapper bg="white">
@@ -89,10 +95,16 @@ const HomeScreen = () => {
               shadow={true}
             />
           )}
+          onEndReached={() => { fetchPosts() }}
+          onEndReachedThreshold={0}
           ListFooterComponent={
-            <View style={{ marginVertical: posts.length ? 30 : 200 }}>
-              <Loading />
-            </View>
+            hasMore ?
+              <View style={{ marginVertical: posts.length ? 30 : 200 }}>
+                <Loading />
+              </View> :
+              <View style={{ marginVertical: 10 }}>
+                <Text style={styles.noPosts}>No More Posts</Text>
+              </View>
           }
         />
       </View>
@@ -137,5 +149,10 @@ const styles = StyleSheet.create({
   listStyle: {
     paddingTop: 20,
     paddingHorizontal: wp(4),
+  },
+  noPosts: {
+    fontSize: hp(2),
+    color: theme.colors.text,
+    textAlign: 'center',
   }
 })

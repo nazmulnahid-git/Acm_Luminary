@@ -78,6 +78,9 @@ const NewPostScreen = () => {
     setLoading(false);
     if (res.success) {
       ToastAndroid.show('Post Successfully', ToastAndroid.SHORT);
+      setFile(null);
+      bodyRef.current = '';
+      editorRef.current?.setContentHTML('');
       router.back();
       return;
     }

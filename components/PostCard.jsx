@@ -78,8 +78,7 @@ const PostCard = ({
   }
 
   const fileType = item.file && item.file.includes('image/upload') ? 'image' : 'video';
-  const liked = likes.filter(like => like.user_id == item.users.id).length > 0 ? true : false;
-  console.log(likes);
+  const liked = likes.filter(like => like.user_id == currentUser.id).length > 0 ? true : false;
 
   return (
     <View style={[styles.container, hasShadow && shadowStyles]}>
